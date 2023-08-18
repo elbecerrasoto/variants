@@ -20,8 +20,6 @@ OUT="$4"
 REF_ALIAS="ref/ecoli"
 CORES="4"
 
-VARSCAN_BIN='/home/ebecerra/4-env/bin-source/varscan-2.4.5/VarScan.v2.4.5.jar'
-
 # bowtie2-build "${REFERENCE}" "${REF_ALIAS}"
 
 # align using bwtie2
@@ -40,4 +38,4 @@ samtools index "${OUT}.s.bam" -o "${OUT}.s.bai"
 samtools mpileup -f "$REFERENCE" "${OUT}.s.bam" -o "${OUT}.mpileup"
 
 # create tsv file with variants
-java -jar "$VARSCAN_BIN" pileup2snp "${OUT}.mpileup" --min-var-freq 0.1  --p-value 0.01 >| "${OUT}.tsv"
+varscan pileup2snp "${OUT}.mpileup" --min-var-freq 0.1  --p-value 0.01 >| "${OUT}.tsv"

@@ -1,4 +1,4 @@
-name: bl12_align
+name: bl12
 channels:
     - conda-forge
     - bioconda

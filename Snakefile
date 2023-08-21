@@ -1,39 +1,23 @@
-IN_GENOMES = "input_genomes.txt"
-IN_PFAMS = "input_pfams.txt"
+FORWARD_REVERSE_STEM = config["in_tsv"]
 
-SCRIPTS_DIR = "scripts"
+REF_DIR = config["ref"]
+RESULTS_DIR = config["results"]
 
-GENOMES_DIR = "1-genomes"
-PFAMS_DIR = "2-pfams"
-FILTERED_DIR = "3-filtered"
-ALL_DIR = "4-all"
-
-
-with open(IN_GENOMES , "r") as file:
-    GENOMES = []
-    for line in file:
-        GENOMES.append(line.strip())
-
-
-# for running locally 2 iscan threads
-# around 20 GBs of RAM
-ISCAN_THREADS = 2
-
+def parse_config(config):
+    return forwards, reverses, names
 
 rule all:
     input:
         ALL_DIR + "/all.faa.tsv",
 
-rule download_genomes:
+rule download_ref:
     input:
         "input_genomes.txt",
     output:
-        GENOMES_DIR + "/{genome}/{genome}.zip",
+        GENOMES_DIR + "/{sample}/{sample}.zip",
     shell:
         """
-        mkdir -p {GENOMES_DIR}/{wildcards.genome}
-
-        datasets download genome accession {wildcards.genome} --filename {output} --include protein,genome,gff3
+        datasets download genome accession {wildcards.sample} --filename {output} --include protein,genome,gff3
         """
 
 
@@ -41,21 +25,17 @@ rule unzip_genomes:
     input:
         rules.download_genomes.output,
     output:
-        faa = GENOMES_DIR + "/{genome}/{genome}.faa",
-        fna = GENOMES_DIR + "/{genome}/{genome}.fna",
-        gff = GENOMES_DIR + "/{genome}/{genome}.gff",
+        fna = REF_DIR + "/{sample}/{sample}.fna",
     shell:
         """
         unzip -o {input} -d {GENOMES_DIR}/{wildcards.genome}
 
         # Flatten ncbi dir structure
-        mv {GENOMES_DIR}/{wildcards.genome}/ncbi_dataset/data/{wildcards.genome}/* \
-           {GENOMES_DIR}/{wildcards.genome}
+        mv {GENOMES_DIR}/{wildcards.sample}/ncbi_dataset/data/{wildcards.sample}/* \
+           {GENOMES_DIR}/{wildcards.sample}
 
-        # Rename faa, fna, gff
-        mv {GENOMES_DIR}/{wildcards.genome}/*.faa {output.faa}
+        # Rename fna
         mv {GENOMES_DIR}/{wildcards.genome}/*.fna {output.fna}
-        mv {GENOMES_DIR}/{wildcards.genome}/*.gff {output.gff}
 
         # Remove crust
         rm -r {GENOMES_DIR}/{wildcards.genome}/ncbi_dataset/ \

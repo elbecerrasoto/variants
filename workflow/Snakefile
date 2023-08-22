@@ -14,7 +14,7 @@ rule all:
         f"{REFERENCE_DIR}/{REFERENCE}.fna"
 
 
-rule download_ref:
+rule download_reference:
     output:
         f"{REFERENCE_DIR}/{REFERENCE}.zip",
     shell:
@@ -25,7 +25,7 @@ rule download_ref:
 
 rule unzip_genomes:
     input:
-        rules.download_ref.output,
+        rules.download_reference.output,
     output:
         f"{REFERENCE_DIR}/{REFERENCE}.fna",
     shell:

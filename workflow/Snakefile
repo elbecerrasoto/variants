@@ -13,6 +13,8 @@ REFERENCE_DIR = f"{RESULTS_DIR}/reference"
 
 ALL = multiext(f"{REFERENCE_DIR}/{REFERENCE}", ".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2",
                 ".rev.1.bt2", ".rev.2.bt2")
+BOWTIE2_BUILD_THREADS = 12
+
 
 
 rule all:
@@ -59,8 +61,10 @@ rule index_reference:
     params:
         fna_basename = lambda w, input: Path(input.fna).name,
         alias = {REFERENCE},
+    threads:
+        BOWTIE2_BUILD_THREADS
     shell:
         """
         cd {REFERENCE_DIR}
-        bowtie2-build {params.fna_basename} {params.alias}
+        bowtie2-build --threads {threads} {params.fna_basename} {params.alias}
         """

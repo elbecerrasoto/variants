@@ -1,33 +1,39 @@
+from pathlib import Path
+
+
 FORWARD = "forward.fastq.gz"
 REVERSE = "reverse.fastq.gz"
-REFERENCE = "GCA_013166975.1" # BL12 e. coli
+REFERENCE = "GCA_013166975.1" # BL12 e. coli.
 
 
 RESULTS_DIR = "results"
-RESULTS_DIR_OTHER = "results/other"
-REFERENCE_DIR = "reference"
+RESULTS_DIR_OTHER = f"{RESULTS_DIR}/other"
+REFERENCE_DIR = f"{RESULTS_DIR}/reference"
 
 
-# sample_name, forward, reverse,
+ALL = multiext(f"{REFERENCE_DIR}/{REFERENCE}", ".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2",
+                ".rev.1.bt2", ".rev.2.bt2")
+
+
 rule all:
     input:
-        f"{REFERENCE_DIR}/{REFERENCE}.fna"
+        ALL
 
 
 rule download_reference:
     output:
-        f"{REFERENCE_DIR}/{REFERENCE}.zip",
+        zip = f"{REFERENCE_DIR}/{REFERENCE}.zip",
     shell:
         """
         datasets download genome accession {REFERENCE} --filename {output} --include genome
         """
 
 
-rule unzip_genomes:
+rule unzip_reference:
     input:
-        rules.download_reference.output,
+        zip = rules.download_reference.output.zip,
     output:
-        f"{REFERENCE_DIR}/{REFERENCE}.fna",
+        fna = f"{REFERENCE_DIR}/{REFERENCE}.fna",
     shell:
         """
         unzip -o {input} -d {REFERENCE_DIR}
@@ -44,3 +50,17 @@ rule unzip_genomes:
               {REFERENCE_DIR}/README.md
         """
 
+
+rule index_reference:
+    input:
+        fna = rules.unzip_reference.output.fna,
+    output:
+        ALL
+    params:
+        fna_basename = lambda w, input: Path(input.fna).name,
+        alias = {REFERENCE},
+    shell:
+        """
+        cd {REFERENCE_DIR}
+        bowtie2-build {params.fna_basename} {params.alias}
+        """

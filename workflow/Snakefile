@@ -10,7 +10,7 @@ NAME = "test_sample"
 
 RESULTS_DIR = config["results"]["dir"]
 RESULTS_DIR_ALIGN = config["results"]["alignments"]
-REFERENCE_DIR = config["results"]["reference"]
+RESULTS_DIR_REFERENCE = config["results"]["reference"]
 
 
 ALL = f"{RESULTS_DIR_ALIGN}/{NAME}.mpileup"
@@ -25,7 +25,7 @@ rule all:
 
 rule download_reference:
     output:
-        zip=f"{REFERENCE_DIR}/{ID}.zip",
+        zip=f"{RESULTS_DIR_REFERENCE}/{ID}.zip",
     shell:
         """
         datasets download genome accession {ID} --filename {output} --include genome
@@ -36,21 +36,21 @@ rule unzip_reference:
     input:
         zip=rules.download_reference.output.zip,
     output:
-        fna=f"{REFERENCE_DIR}/{ID}.fna",
+        fna=f"{RESULTS_DIR_REFERENCE}/{ID}.fna",
     shell:
         """
-        unzip -o {input} -d {REFERENCE_DIR}
+        unzip -o {input} -d {RESULTS_DIR_REFERENCE}
 
         # Flatten ncbi dir structure
-        mv {REFERENCE_DIR}/ncbi_dataset/data/{ID}/* \
-           {REFERENCE_DIR}
+        mv {RESULTS_DIR_REFERENCE}/ncbi_dataset/data/{ID}/* \
+           {RESULTS_DIR_REFERENCE}
 
         # Rename fna
-        mv {REFERENCE_DIR}/*.fna {output}
+        mv {RESULTS_DIR_REFERENCE}/*.fna {output}
 
         # Remove crust
-        rm -r {REFERENCE_DIR}/ncbi_dataset/ \
-              {REFERENCE_DIR}/README.md
+        rm -r {RESULTS_DIR_REFERENCE}/ncbi_dataset/ \
+              {RESULTS_DIR_REFERENCE}/README.md
         """
 
 
@@ -59,7 +59,7 @@ rule index_reference:
         fna=rules.unzip_reference.output.fna,
     output:
         indexes=multiext(
-            f"{REFERENCE_DIR}/{ID}",
+            f"{RESULTS_DIR_REFERENCE}/{ID}",
             ".1.bt2",
             ".2.bt2",
             ".3.bt2",
@@ -68,7 +68,7 @@ rule index_reference:
             ".rev.2.bt2",
         ),
     params:
-        indexes_basename=f"{REFERENCE_DIR}/{ID}",
+        indexes_basename=f"{RESULTS_DIR_REFERENCE}/{ID}",
     threads: BOWTIE2_THREADS
     shell:
         """
@@ -84,7 +84,7 @@ rule align:
     output:
         sam=f"{RESULTS_DIR_ALIGN}/{NAME}.sam",
     params:
-        indexes_basename=f"{REFERENCE_DIR}/{ID}",
+        indexes_basename=f"{RESULTS_DIR_REFERENCE}/{ID}",
     threads: BOWTIE2_THREADS
     shell:
         """

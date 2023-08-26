@@ -10,7 +10,7 @@ RESULTS_DIR_OTHER = f"{RESULTS_DIR}/other"
 REFERENCE_DIR = f"{RESULTS_DIR}/reference"
 
 
-ALL = f"{RESULTS_DIR_OTHER}/{NAME}.sorted.bam"
+ALL = f"{RESULTS_DIR_OTHER}/{NAME}.bai"
 
 BOWTIE2_THREADS = 12
 
@@ -111,12 +111,22 @@ rule sort_bam:
         """
 
 
+rule index_bam:
+    input:
+        sbam=rules.sort_bam.output.sbam,
+    output:
+        bai=f"{RESULTS_DIR_OTHER}/{NAME}.bai",
+    shell:
+        """
+        samtools index {input.sbam} -o {output.bai}
+        """
+
+
 # # sort bam
 # samtools sort "${OUT}.bam" -o "${OUT}.s.bam"
 
 # # index bam
 # samtools index "${OUT}.s.bam" -o "${OUT}.s.bai"
-
 # # create mpileup file
 # samtools mpileup -f "$REFERENCE" "${OUT}.s.bam" -o "${OUT}.mpileup"
 # # create tsv file with variants

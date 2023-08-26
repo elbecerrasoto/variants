@@ -10,7 +10,7 @@ RESULTS_DIR_OTHER = f"{RESULTS_DIR}/other"
 REFERENCE_DIR = f"{RESULTS_DIR}/reference"
 
 
-ALL = f"{RESULTS_DIR_OTHER}/{NAME}.bam"
+ALL = f"{RESULTS_DIR_OTHER}/{NAME}.sorted.bam"
 
 BOWTIE2_THREADS = 12
 
@@ -98,3 +98,26 @@ rule get_bam:
         """
         samtools view -S -b {input.sam} >| {output.bam}
         """
+
+
+rule sort_bam:
+    input:
+        bam=rules.get_bam.output.bam,
+    output:
+        sbam=f"{RESULTS_DIR_OTHER}/{NAME}.sorted.bam",
+    shell:
+        """
+        samtools sort {input.bam} -o {output.sbam}
+        """
+
+
+# # sort bam
+# samtools sort "${OUT}.bam" -o "${OUT}.s.bam"
+
+# # index bam
+# samtools index "${OUT}.s.bam" -o "${OUT}.s.bai"
+
+# # create mpileup file
+# samtools mpileup -f "$REFERENCE" "${OUT}.s.bam" -o "${OUT}.mpileup"
+# # create tsv file with variants
+# varscan pileup2snp "${OUT}.mpileup" --min-var-freq 0.1  --p-value 0.01 >| "${OUT}.tsv"

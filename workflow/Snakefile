@@ -1,5 +1,3 @@
-from pathlib import Path
-
 # ReqSeq ID of reference genome
 ID = "GCA_013166975.1"  # BL12 e. coli.
 
@@ -12,16 +10,7 @@ RESULTS_DIR_OTHER = f"{RESULTS_DIR}/other"
 REFERENCE_DIR = f"{RESULTS_DIR}/reference"
 
 
-ALL = multiext(
-    f"{REFERENCE_DIR}/{ID}",
-    ".1.bt2",
-    ".2.bt2",
-    ".3.bt2",
-    ".4.bt2",
-    ".rev.1.bt2",
-    ".rev.2.bt2",
-)
-
+ALL = f"{RESULTS_DIR_OTHER}/{NAME}.sam"
 
 BOWTIE2_THREADS = 12
 
@@ -84,26 +73,17 @@ rule index_reference:
         """
 
 
-# rule align:
-#     input:
-#         forward=FORWARD,
-#         reverse=REVERSE,
-#         indexes=rules.index_reference.output.indexes
-# ALL = multiext(
-#     f"{REFERENCE_DIR}/{ID}",
-#     ".1.bt2",
-#     ".2.bt2",
-#     ".3.bt2",
-#     ".4.bt2",
-#     ".rev.1.bt2",
-#     ".rev.2.bt2",
-# )
-#     output:
-#         sam=f"{NAME}.sam",
-#     params:
-#         alias={ID},
-#     threads: BOWTIE2_THREADS
-#     shell:
-#         """
-#         bowtie2 -p {threads} -x {alias} -1 "$FORWARD" -2 "$BACKWARD" -S "${OUT}.sam"
-#         """
+rule align:
+    input:
+        fq_forward=FORWARD,
+        fq_reverse=REVERSE,
+        indexes=rules.index_reference.output.indexes,
+    output:
+        sam=f"{RESULTS_DIR_OTHER}/{NAME}.sam",
+    params:
+        indexes_basename=f"{REFERENCE_DIR}/{ID}",
+    threads: BOWTIE2_THREADS
+    shell:
+        """
+        bowtie2 -p {threads} -x {params.indexes_basename} -1 {input.fq_forward} -2 {input.fq_reverse} -S {output.sam}
+        """

@@ -1,12 +1,15 @@
-# ReqSeq ID of reference genome
-ID = "GCA_013166975.1"  # BL12 e. coli.
+configfile: "config/config.yaml"
+
+
+# RefSeq ID of reference genome
+ID = config["reference_genome_id"]
 
 FORWARD = "tests/forward.fastq.gz"
 REVERSE = "tests/reverse.fastq.gz"
 NAME = "test_sample"
 
 RESULTS_DIR = "results"
-RESULTS_DIR_OTHER = f"{RESULTS_DIR}/other"
+RESULTS_DIR_OTHER = f"{RESULTS_DIR}/alignments"
 REFERENCE_DIR = f"{RESULTS_DIR}/reference"
 
 

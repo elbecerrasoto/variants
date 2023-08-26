@@ -10,7 +10,7 @@ RESULTS_DIR_OTHER = f"{RESULTS_DIR}/other"
 REFERENCE_DIR = f"{RESULTS_DIR}/reference"
 
 
-ALL = f"{RESULTS_DIR_OTHER}/{NAME}.sam"
+ALL = f"{RESULTS_DIR_OTHER}/{NAME}.bam"
 
 BOWTIE2_THREADS = 12
 
@@ -86,4 +86,15 @@ rule align:
     shell:
         """
         bowtie2 -p {threads} -x {params.indexes_basename} -1 {input.fq_forward} -2 {input.fq_reverse} -S {output.sam}
+        """
+
+
+rule get_bam:
+    input:
+        sam=rules.align.output.sam,
+    output:
+        bam=f"{RESULTS_DIR_OTHER}/{NAME}.bam",
+    shell:
+        """
+        samtools view -S -b {input.sam} >| {output.bam}
         """

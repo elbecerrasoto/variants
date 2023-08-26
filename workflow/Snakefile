@@ -8,12 +8,12 @@ FORWARD = "tests/forward.fastq.gz"
 REVERSE = "tests/reverse.fastq.gz"
 NAME = "test_sample"
 
-RESULTS_DIR = "results"
-RESULTS_DIR_OTHER = f"{RESULTS_DIR}/alignments"
-REFERENCE_DIR = f"{RESULTS_DIR}/reference"
+RESULTS_DIR = config["results"]["dir"]
+REFERENCE_DIR_ALIGN = config["results"]["alignments"]
+REFERENCE_DIR = config["results"]["reference"]
 
 
-ALL = f"{RESULTS_DIR_OTHER}/{NAME}.mpileup"
+ALL = f"{REFERENCE_DIR_ALIGN}/{NAME}.mpileup"
 
 BOWTIE2_THREADS = 12
 
@@ -82,7 +82,7 @@ rule align:
         fq_reverse=REVERSE,
         indexes=rules.index_reference.output.indexes,
     output:
-        sam=f"{RESULTS_DIR_OTHER}/{NAME}.sam",
+        sam=f"{REFERENCE_DIR_ALIGN}/{NAME}.sam",
     params:
         indexes_basename=f"{REFERENCE_DIR}/{ID}",
     threads: BOWTIE2_THREADS
@@ -96,7 +96,7 @@ rule get_bam:
     input:
         sam=rules.align.output.sam,
     output:
-        bam=f"{RESULTS_DIR_OTHER}/{NAME}.bam",
+        bam=f"{REFERENCE_DIR_ALIGN}/{NAME}.bam",
     shell:
         """
         samtools view -S -b {input.sam} >| {output.bam}
@@ -107,7 +107,7 @@ rule sort_bam:
     input:
         bam=rules.get_bam.output.bam,
     output:
-        sbam=f"{RESULTS_DIR_OTHER}/{NAME}.sorted.bam",
+        sbam=f"{REFERENCE_DIR_ALIGN}/{NAME}.sorted.bam",
     shell:
         """
         samtools sort {input.bam} -o {output.sbam}
@@ -118,7 +118,7 @@ rule index_bam:
     input:
         sbam=rules.sort_bam.output.sbam,
     output:
-        bai=f"{RESULTS_DIR_OTHER}/{NAME}.sorted.bam.bai",
+        bai=f"{REFERENCE_DIR_ALIGN}/{NAME}.sorted.bam.bai",
     shell:
         """
         samtools index {input.sbam} -o {output.bai}
@@ -130,7 +130,7 @@ rule get_mpileup:
         fna=rules.unzip_reference.output.fna,
         sbam=rules.sort_bam.output.sbam,
     output:
-        mpileup=f"{RESULTS_DIR_OTHER}/{NAME}.mpileup",
+        mpileup=f"{REFERENCE_DIR_ALIGN}/{NAME}.mpileup",
     shell:
         """
         bcftools mpileup -f {input.fna} {input.sbam} >| {output.mpileup}

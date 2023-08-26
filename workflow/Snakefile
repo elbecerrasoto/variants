@@ -10,7 +10,7 @@ RESULTS_DIR_OTHER = f"{RESULTS_DIR}/other"
 REFERENCE_DIR = f"{RESULTS_DIR}/reference"
 
 
-ALL = f"{RESULTS_DIR_OTHER}/{NAME}.sorted.bam.bai"
+ALL = f"{RESULTS_DIR_OTHER}/{NAME}.mpileup"
 
 BOWTIE2_THREADS = 12
 
@@ -122,16 +122,18 @@ rule index_bam:
         """
 
 
-# rule get_mpileup:
-#     input:
-#         fna=rules.unzip_reference.output.fna,
-#         bai=rules.index_bam.output.bai,
-#     output:
-#         mpileup=f"{RESULTS_DIR_OTHER}/{NAME}.mpileup",
-#     shell:
-#         """
-#         samtools mpileup -f {input.fna} {input.bai} -o {output.mpileup}
-#         """
+rule get_mpileup:
+    input:
+        fna=rules.unzip_reference.output.fna,
+        sbam=rules.sort_bam.output.sbam,
+    output:
+        mpileup=f"{RESULTS_DIR_OTHER}/{NAME}.mpileup",
+    shell:
+        """
+        bcftools mpileup -f {input.fna} {input.sbam} > {output.mpileup}
+        """
+
+
 # # sort bam
 # samtools sort "${OUT}.bam" -o "${OUT}.s.bam"
 # # index bam

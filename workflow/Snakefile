@@ -1,10 +1,11 @@
 from pathlib import Path
 
+# ReqSeq ID of reference genome
+ID = "GCA_013166975.1"  # BL12 e. coli.
 
-FORWARD = "forward.fastq.gz"
-REVERSE = "reverse.fastq.gz"
-REFERENCE = "GCA_013166975.1"  # BL12 e. coli.
-
+FORWARD = "tests/forward.fastq.gz"
+REVERSE = "tests/reverse.fastq.gz"
+NAME = "test_sample"
 
 RESULTS_DIR = "results"
 RESULTS_DIR_OTHER = f"{RESULTS_DIR}/other"
@@ -12,7 +13,7 @@ REFERENCE_DIR = f"{RESULTS_DIR}/reference"
 
 
 ALL = multiext(
-    f"{REFERENCE_DIR}/{REFERENCE}",
+    f"{REFERENCE_DIR}/{ID}",
     ".1.bt2",
     ".2.bt2",
     ".3.bt2",
@@ -20,7 +21,9 @@ ALL = multiext(
     ".rev.1.bt2",
     ".rev.2.bt2",
 )
-BOWTIE2_BUILD_THREADS = 12
+
+
+BOWTIE2_THREADS = 12
 
 
 rule all:
@@ -30,10 +33,10 @@ rule all:
 
 rule download_reference:
     output:
-        zip=f"{REFERENCE_DIR}/{REFERENCE}.zip",
+        zip=f"{REFERENCE_DIR}/{ID}.zip",
     shell:
         """
-        datasets download genome accession {REFERENCE} --filename {output} --include genome
+        datasets download genome accession {ID} --filename {output} --include genome
         """
 
 
@@ -41,13 +44,13 @@ rule unzip_reference:
     input:
         zip=rules.download_reference.output.zip,
     output:
-        fna=f"{REFERENCE_DIR}/{REFERENCE}.fna",
+        fna=f"{REFERENCE_DIR}/{ID}.fna",
     shell:
         """
         unzip -o {input} -d {REFERENCE_DIR}
 
         # Flatten ncbi dir structure
-        mv {REFERENCE_DIR}/ncbi_dataset/data/{REFERENCE}/* \
+        mv {REFERENCE_DIR}/ncbi_dataset/data/{ID}/* \
            {REFERENCE_DIR}
 
         # Rename fna
@@ -63,13 +66,44 @@ rule index_reference:
     input:
         fna=rules.unzip_reference.output.fna,
     output:
-        ALL,
+        indexes=multiext(
+            f"{REFERENCE_DIR}/{ID}",
+            ".1.bt2",
+            ".2.bt2",
+            ".3.bt2",
+            ".4.bt2",
+            ".rev.1.bt2",
+            ".rev.2.bt2",
+        ),
     params:
-        fna_basename=lambda w, input: Path(input.fna).name,
-        alias={REFERENCE},
-    threads: BOWTIE2_BUILD_THREADS
+        indexes_basename=f"{REFERENCE_DIR}/{ID}",
+    threads: BOWTIE2_THREADS
     shell:
         """
-        cd {REFERENCE_DIR}
-        bowtie2-build --threads {threads} {params.fna_basename} {params.alias}
+        bowtie2-build --threads {threads} {input.fna} {params.indexes_basename}
         """
+
+
+# rule align:
+#     input:
+#         forward=FORWARD,
+#         reverse=REVERSE,
+#         indexes=rules.index_reference.output.indexes
+# ALL = multiext(
+#     f"{REFERENCE_DIR}/{ID}",
+#     ".1.bt2",
+#     ".2.bt2",
+#     ".3.bt2",
+#     ".4.bt2",
+#     ".rev.1.bt2",
+#     ".rev.2.bt2",
+# )
+#     output:
+#         sam=f"{NAME}.sam",
+#     params:
+#         alias={ID},
+#     threads: BOWTIE2_THREADS
+#     shell:
+#         """
+#         bowtie2 -p {threads} -x {alias} -1 "$FORWARD" -2 "$BACKWARD" -S "${OUT}.sam"
+#         """

@@ -130,15 +130,16 @@ rule get_mpileup:
         mpileup=f"{RESULTS_DIR_OTHER}/{NAME}.mpileup",
     shell:
         """
-        bcftools mpileup -f {input.fna} {input.sbam} > {output.mpileup}
+        bcftools mpileup -f {input.fna} {input.sbam} >| {output.mpileup}
         """
 
 
-# # sort bam
-# samtools sort "${OUT}.bam" -o "${OUT}.s.bam"
-# # index bam
-# samtools index "${OUT}.s.bam" -o "${OUT}.s.bai"
-# # create mpileup file
-# samtools mpileup -f "$REFERENCE" "${OUT}.s.bam" -o "${OUT}.mpileup"
-# # create tsv file with variants
-# varscan pileup2snp "${OUT}.mpileup" --min-var-freq 0.1  --p-value 0.01 >| "${OUT}.tsv"
+rule call_variants:
+    input:
+        mpileup=rules.get_mpileup.output.mpileup,
+    output:
+        tsv=f"{RESULTS_DIR}/{NAME}.variants.tsv",
+    shell:
+        """
+        varscan pileup2snp {input.mpileup} --min-var-freq 0.1 --p-value 0.01 >| {output.tsv}
+        """

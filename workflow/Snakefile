@@ -91,6 +91,8 @@ rule index_reference:
     params:
         indexes_basename=f"{RESULTS_DIR_REFERENCE}/{ID}",
     threads: BOWTIE2_THREADS
+    conda:
+        "envs/bowtie2.yaml"
     shell:
         """
         bowtie2-build --threads {threads} {input.fna} {params.indexes_basename}
@@ -107,6 +109,8 @@ rule align:
     params:
         indexes_basename=f"{RESULTS_DIR_REFERENCE}/{ID}",
     threads: BOWTIE2_THREADS
+    conda:
+        "envs/bowtie2.yaml"
     shell:
         """
         bowtie2 -p {threads} -x {params.indexes_basename} -1 {input.fq_forward} -2 {input.fq_reverse} -S {output.sam}

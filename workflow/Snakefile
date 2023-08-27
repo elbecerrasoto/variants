@@ -14,11 +14,14 @@ def to_list(file):
     return [line.strip() for line in open(file).readlines()]
 
 
-NAMES = to_list(config["names_list"])
-FORWARDS = to_list(config["fqs"]["forward_list"])
-REVERSES = to_list(config["fqs"]["reverse_list"])
+NAMES = to_list(config["lists"]["names"])
+FORWARDS = to_list(config["lists"]["fqs"]["forward"])
+REVERSES = to_list(config["lists"]["fqs"]["reverse"])
 
 BOWTIE2_THREADS = config["bowtie2_threads"]
+
+PVAL = config["variants"]["pval"]
+FREQ = config["variants"]["freq"]
 
 
 ALL = expand("{results}/{names}.variants.tsv", results=RESULTS_DIR, names=NAMES)
@@ -149,8 +152,8 @@ rule call_variants:
     output:
         tsv=f"{RESULTS_DIR}/{{name}}.variants.tsv",
     params:
-        freq="0.1",
-        pval="0.01",
+        pval=PVAL,
+        freq=FREQ,
     shell:
         """
         varscan pileup2snp {input.mpileup} --min-var-freq {params.freq} --p-value {params.pval} >| {output.tsv}

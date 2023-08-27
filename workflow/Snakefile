@@ -135,7 +135,7 @@ rule get_mpileup:
         mpileup=f"{RESULTS_DIR_ALIGN}/{{name}}.mpileup",
     shell:
         """
-        bcftools mpileup -f {input.fna} {input.sbam} >| {output.mpileup}
+        samtools mpileup -f {input.fna} {input.sbam} -o {output.mpileup}
         """
 
 

@@ -1,11 +1,8 @@
-name: bl12
+name: variants
 channels:
     - conda-forge
     - bioconda
 dependencies:
     - snakemake
     - snakedeploy
-    - ncbi-datasets-cli
-    - bowtie2
-    - samtools
-    - varscan
+    - snakefmt

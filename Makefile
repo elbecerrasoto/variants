@@ -1,4 +1,4 @@
-ENV=bl12
+ENV=variants
 
 .PHONY dry-run:
 dry-run:
@@ -19,3 +19,7 @@ format:
 .PHONY env:
 env:
 	mamba env create
+
+.PHONY rm-env:
+rm-env:
+	mamba env remove --name $(ENV)

@@ -98,7 +98,7 @@ rule get_bam:
     input:
         sam=rules.align.output.sam,
     output:
-        bam=f"{RESULTS_DIR_ALIGN}/{NAME}.bam",
+        bam=f"{RESULTS_DIR_ALIGN}/{{name}}.bam",
     shell:
         """
         samtools view -S -b {input.sam} >| {output.bam}
@@ -109,7 +109,7 @@ rule sort_bam:
     input:
         bam=rules.get_bam.output.bam,
     output:
-        sbam=f"{RESULTS_DIR_ALIGN}/{NAME}.sorted.bam",
+        sbam=f"{RESULTS_DIR_ALIGN}/{{name}}.sorted.bam",
     shell:
         """
         samtools sort {input.bam} -o {output.sbam}
@@ -120,7 +120,7 @@ rule index_bam:
     input:
         sbam=rules.sort_bam.output.sbam,
     output:
-        bai=f"{RESULTS_DIR_ALIGN}/{NAME}.sorted.bam.bai",
+        bai=f"{RESULTS_DIR_ALIGN}/{{name}}.sorted.bam.bai",
     shell:
         """
         samtools index {input.sbam} -o {output.bai}
@@ -132,7 +132,7 @@ rule get_mpileup:
         fna=rules.unzip_reference.output.fna,
         sbam=rules.sort_bam.output.sbam,
     output:
-        mpileup=f"{RESULTS_DIR_ALIGN}/{NAME}.mpileup",
+        mpileup=f"{RESULTS_DIR_ALIGN}/{{name}}.mpileup",
     shell:
         """
         bcftools mpileup -f {input.fna} {input.sbam} >| {output.mpileup}
@@ -143,7 +143,7 @@ rule call_variants:
     input:
         mpileup=rules.get_mpileup.output.mpileup,
     output:
-        tsv=f"{RESULTS_DIR}/{NAME}.variants.tsv",
+        tsv=f"{RESULTS_DIR}/{{name}}.variants.tsv",
     shell:
         """
         varscan pileup2snp {input.mpileup} --min-var-freq 0.1 --p-value 0.01 >| {output.tsv}

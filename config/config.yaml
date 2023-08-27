@@ -1,0 +1,22 @@
+# RefSeq ID of reference genome
+reference_id:
+  "GCA_013166975.1" # BL12 e. coli
+
+names:
+  "tests/input_names.txt"
+forwards:
+  "tests/input_forwards.txt"
+reverses:
+  "tests/input_reverses.txt"
+
+out_results:
+  "results"
+out_alignments:
+  "results/alignments"
+out_reference:
+  "results/reference"
+
+bowtie2_threads: 12
+
+variants_pval: 0.01
+variants_freq: 0.1

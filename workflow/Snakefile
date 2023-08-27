@@ -122,6 +122,8 @@ rule get_bam:
         sam=rules.align.output.sam,
     output:
         bam=f"{RESULTS_DIR_ALIGN}/{{name}}.bam",
+    conda:
+        "envs/samtools.yaml"
     shell:
         """
         samtools view -S -b {input.sam} >| {output.bam}
@@ -133,6 +135,8 @@ rule sort_bam:
         bam=rules.get_bam.output.bam,
     output:
         sbam=f"{RESULTS_DIR_ALIGN}/{{name}}.sorted.bam",
+    conda:
+        "envs/samtools.yaml"
     shell:
         """
         samtools sort {input.bam} -o {output.sbam}
@@ -144,6 +148,8 @@ rule index_bam:
         sbam=rules.sort_bam.output.sbam,
     output:
         bai=f"{RESULTS_DIR_ALIGN}/{{name}}.sorted.bam.bai",
+    conda:
+        "envs/samtools.yaml"
     shell:
         """
         samtools index {input.sbam} -o {output.bai}
@@ -156,6 +162,8 @@ rule get_mpileup:
         sbam=rules.sort_bam.output.sbam,
     output:
         mpileup=f"{RESULTS_DIR_ALIGN}/{{name}}.mpileup",
+    conda:
+        "envs/samtools.yaml"
     shell:
         """
         samtools mpileup -f {input.fna} {input.sbam} -o {output.mpileup}
@@ -170,6 +178,8 @@ rule call_variants:
     params:
         pval=PVAL,
         freq=FREQ,
+    conda:
+        "envs/varscan.yaml"
     shell:
         """
         varscan pileup2snp {input.mpileup} --min-var-freq {params.freq} --p-value {params.pval} >| {output.tsv}

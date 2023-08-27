@@ -148,7 +148,10 @@ rule call_variants:
         mpileup=rules.get_mpileup.output.mpileup,
     output:
         tsv=f"{RESULTS_DIR}/{{name}}.variants.tsv",
+    params:
+        freq="0.1",
+        pval="0.01",
     shell:
         """
-        varscan pileup2snp {input.mpileup} --min-var-freq 0.1 --p-value 0.01 >| {output.tsv}
+        varscan pileup2snp {input.mpileup} --min-var-freq {params.freq} --p-value {params.pval} >| {output.tsv}
         """

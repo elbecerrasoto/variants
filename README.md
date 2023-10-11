@@ -1,7 +1,7 @@
 
 # Variants
 
-Variant Calling _snakemake pipeline_ used at DeMoraes Lab.
+Variant Calling [_snakemake pipeline_](https://snakemake.github.io/) used at DeMoraes Lab.
 
 It downloads a reference genome (default _BL12 e. coli_),
 and uses bowtie2, samtools and varscan to call variants.
@@ -17,10 +17,18 @@ snakemake --cores all --use-conda
 ### Style 2: command line arguments
 
 ``` sh
-snakemake --cores all --use-conda --config reference_id=GCF_000699465.1\
-                                                  names=20231011_variants/samples.txt\
-                                                forwards=20231011_variants/forwards.txt\
-                                                reverses=20231011_variants/reverses.txt
+snakemake --cores all --use-conda --config\
+    reference_id=GCA_013166975.1\
+    names=tests/input_names.txt\
+    forwards=tests/input_forwards.txt\
+    reverses=tests/input_reverses.txt
+```
+
+
+### Generate report
+
+``` sh
+snakemake --report report.zip
 ```
 
 ## Inputs
@@ -35,8 +43,8 @@ The main output is a tsv of the variants.
 
 ## Prerequisites
 
-+ An _Anaconda Distribution_
-  + I recommended using _miniforge_
++ An [_Anaconda Distribution_](https://github.com/conda-forge/miniforge)
+  + I recommended using [_miniforge_](https://github.com/conda-forge/miniforge)
   + This _README_ uses _mamba_, but substitute by _conda_ if appropiatly.
 
 
@@ -57,11 +65,15 @@ mamba activate variants
 
 The pipeline uses the snakemake conventions,
 so you can edit the config file at `config/config.yaml`,
-and then run ~snakemake --cores all --use-conda~
+and then run:
+
++ `snakemake --cores all --use-conda`
 
 
 ## Issues
 
-bowtie2 uses ~libcrypt.so.1~
-you can install it on _manjaro_ like this: `sudo pacman -S core/libxcrypt-compat`
-~
+_bowtie2_ uses `libcrypt.so.1`
+you can install it on _manjaro_ like this:
+
++ `sudo pacman -S core/libxcrypt-compat`
+

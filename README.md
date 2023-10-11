@@ -17,7 +17,10 @@ snakemake --cores all --use-conda
 ### Style 2: command line arguments
 
 ``` sh
-snakemake --cores all --use-conda --config names=tests/input_names.txt forwards=tests/input_forwards.txt reverses=tests/input_reverses.txt
+snakemake --cores all --use-conda --config reference_id=GCF_000699465.1\
+                                                  names=20231011_variants/samples.txt\
+                                                forwards=20231011_variants/forwards.txt\
+                                                reverses=20231011_variants/reverses.txt
 ```
 
 ## Inputs
@@ -54,7 +57,11 @@ mamba activate variants
 
 The pipeline uses the snakemake conventions,
 so you can edit the config file at `config/config.yaml`,
-and be good to go.
+and then run ~snakemake --cores all --use-conda~
 
 
+## Issues
 
+bowtie2 uses ~libcrypt.so.1~
+you can install it on _manjaro_ like this: `sudo pacman -S core/libxcrypt-compat`
+~

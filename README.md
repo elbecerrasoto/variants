@@ -70,6 +70,11 @@ and then run:
 + `snakemake --cores all --use-conda`
 
 
+## TODO
+
+- [ ] Capture _stdout_ into _log files_
+- [ ] Data directory as input
+
 ## Issues
 
 _bowtie2_ uses `libcrypt.so.1`

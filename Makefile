@@ -1,16 +1,16 @@
 ENV=variants
 
-.PHONY dry-run:
-dry-run:
-	snakemake --cores all -np
+.PHONY dry-test:
+dry-test:
+	snakemake --cores all -np --configfile config/test1.yaml
 
-.PHONY run:
-run:
-	snakemake --use-conda --cores all
+.PHONY test:
+test:
+	snakemake --use-conda --cores all --configfile config/test1.yaml
 
-.PHONY dev-run:
-dev-run:
-	snakemake --use-conda --cores all --rerun-triggers mtime
+.PHONY clean:
+clean:
+	rm -r results_test
 
 .PHONY format:
 format:

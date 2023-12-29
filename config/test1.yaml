@@ -3,18 +3,18 @@ reference_id:
   "GCA_013166975.1" # BL12 e. coli
 
 names:
-  "tests/input_names.txt"
+  "tests/test1/input_names.txt"
 forwards:
-  "tests/input_forwards.txt"
+  "tests/test1/input_forwards.txt"
 reverses:
-  "tests/input_reverses.txt"
+  "tests/test1/input_reverses.txt"
 
 out_results:
-  "results"
+  "results_test/test1"
 out_alignments:
-  "results/alignments"
+  "results_test/test1/alignments"
 out_reference:
-  "results/reference"
+  "results_test/test1/reference"
 
 bowtie2_threads: 12
 

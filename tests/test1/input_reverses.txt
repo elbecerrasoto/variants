@@ -1,0 +1,2 @@
+tests/test1/2.fastq.gz
+tests/test1/reverse.fastq.gz

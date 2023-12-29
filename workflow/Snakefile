@@ -3,7 +3,10 @@ configfile: "config/config.yaml"
 
 # RefSeq ID of reference genome
 ID = config["reference_id"]
+DIR = config["target_dir"]
 
+assert ID is not None, "Please provide a NCBI accession for reference genome"
+assert DIR is not None, "Please provide a directory of fastq files"
 
 RESULTS_DIR = config["out_results"]
 RESULTS_DIR_ALIGN = config["out_alignments"]

@@ -2,12 +2,15 @@
 reference_id:
   "GCA_013166975.1" # BL12 e. coli
 
+target_directory:
+  "tests/test1"
+
 names:
-  "tests/test1/input_names.txt"
+  "results_test/test1/input/names.txt"
 forwards:
-  "tests/test1/input_forwards.txt"
+  "results_test/test1/input/forwards.txt"
 reverses:
-  "tests/test1/input_reverses.txt"
+  "retults_test/test1/input/reverses.txt"
 
 out_results:
   "results_test/test1"

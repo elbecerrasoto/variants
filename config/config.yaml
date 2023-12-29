@@ -1,0 +1,25 @@
+# RefSeq ID of reference genome
+reference_id:
+  null
+
+target_directory:
+  null
+
+names:
+  "results/input/names.txt"
+forwards:
+  "results/input/forwards.txt"
+reverses:
+  "retults/input/reverses.txt"
+
+out_results:
+  "results"
+out_alignments:
+  "results/alignments"
+out_reference:
+  "results/reference"
+
+bowtie2_threads: 12
+
+variants_pval: 0.01
+variants_freq: 0.1

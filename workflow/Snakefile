@@ -23,14 +23,20 @@ M1 = config["forward_mark"]
 M2 = config["reverse_mark"]
 
 
+TARGET_DIR = config["target_dir"]
+
 if INPUT_FILES_EXIST:  # Input files take precedence
     print("Input files take precedence over input data dictory")
 
 elif TARGET_DIR is not None:  # Generate input files from data directory
     print(f"Generating input files at: \n{INPUT_FILES}")
+    cmd = f"python ./scripts/generate_input.py -m1 {M1} -m2 {M2} -o {FILE_NAMES.parent} {TARGET_DIR}"
+    print(cmd)
+    import os
+    print(os.getcwd())
     sp.run(
-        f"scripts/generate_input.py -m1 {M1} -m2 {M2} -o {FILE_NAMES.parent} {TARGET_DIR}",
-        check=True,
+        cmd,
+        check=True, shell=True
     )
 
 else:

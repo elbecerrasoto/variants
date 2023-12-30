@@ -1,8 +1,36 @@
 configfile: "config/config.yaml"
 
+from pathlib import Path
+import subprocess as sp
 
 # RefSeq ID of reference genome
 ID = config["reference_id"]
+
+assert ID is not None, "Please provide a NCBI accession for reference genome"
+
+FILE_NAMES = Path(config["names"])
+FILE_FORWARDS = Path(config["forwards"])
+FILE_REVERSES = Path(config["reverses"])
+
+INPUT_FILES = FILE_NAMES, FILE_FORWARDS, FILE_REVERSES
+
+INPUT_FILES_EXIST = FILE_NAMES.exists() and FILE_FORWARDS.exists() and FILE_REVERSES.exists()
+
+M1 = config["forward_mark"]
+M2 = config["reverse_mark"]
+
+
+if INPUT_FILES_EXIST: # Input files take precedence
+
+    print("Input files take precedence over input data dictory")
+
+elif TARGET_DIR is not None: # Generate input files from data directory
+
+    print(f"Generating input files at: \n{INPUT_FILES}")
+    sp.run(f"scripts/generate_input.py -m1 {M1} -m2 {M2} -o {FILE_NAMES.parent} {TARGET_DIR}", check=True)
+
+else:
+    raise FileNotFoundError(f"Provide either a directory of fastq files or the input files {INPUT_FILES}")
 
 
 RESULTS_DIR = config["out_results"]
@@ -12,11 +40,6 @@ RESULTS_DIR_REFERENCE = config["out_reference"]
 
 def to_list(file):
     return [line.strip() for line in open(file).readlines()]
-
-
-FILE_NAMES = config["names"]
-FILE_FORWARDS = config["forwards"]
-FILE_REVERSES = config["reverses"]
 
 
 NAMES = to_list(FILE_NAMES)

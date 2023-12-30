@@ -45,6 +45,21 @@ rule all:
         ALL,
 
 
+NAMES=config["names"]
+FORWARDS=config["forwards"]
+REVERSES=config["reverses"]
+
+
+rule generate_input_txt:
+    output:
+        f"{NAMES}",
+        f"{FORWARDS}",
+        f"{NAMES}",
+    shell:
+        """
+        xxx
+        """
+
 rule download_reference:
     output:
         zip=f"{RESULTS_DIR_REFERENCE}/{ID}.zip",

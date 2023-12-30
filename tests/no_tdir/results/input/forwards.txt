@@ -1,0 +1,2 @@
+tests/no_tdir/data/1.fastq.gz
+tests/no_tdir/data/forward.fastq.gz

@@ -3,21 +3,28 @@ reference_id:
   "GCA_013166975.1" # BL12 e. coli
 
 target_directory:
-  "tests/test1"
+  "tests/no_tdir/results" # Unused, Input files take precedence
 
+forward_mark:
+  "_R1"
+
+reverse_mark:
+  "_R2"
+
+# Input files, if not provided, generated using target directory and marks
 names:
-  "results_test/test1/input/names.txt"
+  "tests/no_tdir/results/input/names.txt"
 forwards:
-  "results_test/test1/input/forwards.txt"
+  "tests/no_tdir/results/input/forwards.txt"
 reverses:
-  "retults_test/test1/input/reverses.txt"
+  "tests/no_tdir/results/input/reverses.txt"
 
 out_results:
-  "results_test/test1"
+  "tests/no_tdir/results"
 out_alignments:
-  "results_test/test1/alignments"
+  "tests/no_tdir/results/alignments"
 out_reference:
-  "results_test/test1/reference"
+  "tests/no_tdir/results/reference"
 
 bowtie2_threads: 12
 

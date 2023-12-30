@@ -1,2 +1,0 @@
-tests/test1/1.fastq.gz
-tests/test1/forward.fastq.gz

@@ -1,5 +1,6 @@
 configfile: "config/config.yaml"
 
+
 from pathlib import Path
 import subprocess as sp
 
@@ -14,23 +15,28 @@ FILE_REVERSES = Path(config["reverses"])
 
 INPUT_FILES = FILE_NAMES, FILE_FORWARDS, FILE_REVERSES
 
-INPUT_FILES_EXIST = FILE_NAMES.exists() and FILE_FORWARDS.exists() and FILE_REVERSES.exists()
+INPUT_FILES_EXIST = (
+    FILE_NAMES.exists() and FILE_FORWARDS.exists() and FILE_REVERSES.exists()
+)
 
 M1 = config["forward_mark"]
 M2 = config["reverse_mark"]
 
 
-if INPUT_FILES_EXIST: # Input files take precedence
-
+if INPUT_FILES_EXIST:  # Input files take precedence
     print("Input files take precedence over input data dictory")
 
-elif TARGET_DIR is not None: # Generate input files from data directory
-
+elif TARGET_DIR is not None:  # Generate input files from data directory
     print(f"Generating input files at: \n{INPUT_FILES}")
-    sp.run(f"scripts/generate_input.py -m1 {M1} -m2 {M2} -o {FILE_NAMES.parent} {TARGET_DIR}", check=True)
+    sp.run(
+        f"scripts/generate_input.py -m1 {M1} -m2 {M2} -o {FILE_NAMES.parent} {TARGET_DIR}",
+        check=True,
+    )
 
 else:
-    raise FileNotFoundError(f"Provide either a directory of fastq files or the input files {INPUT_FILES}")
+    raise FileNotFoundError(
+        f"Provide either a directory of fastq files or the input files {INPUT_FILES}"
+    )
 
 
 RESULTS_DIR = config["out_results"]

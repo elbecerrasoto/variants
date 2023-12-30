@@ -4,7 +4,6 @@ reference_id:
 
 # Directory with the paired fastq data
 target_dir:
-  null
   "tests/no_tdir/data" # Unused, Input files take precedence
 
 # Marking string for parsing forward reads

@@ -3,6 +3,7 @@
 import os
 import argparse
 import subprocess as sp
+from pathlib import Path
 
 DESCRIPTION = """
     Generate input files for a variant calling Snakemake pipeline
@@ -28,6 +29,8 @@ FILE_REVERSES = f"{OUT_DIR}/reverses.txt"
 FILE_NAMES = f"{OUT_DIR}/names.txt"
 
 if __name__ == "__main__":
+    Path(OUT_DIR).mkdir(parents=True, exist_ok=True)
+
     CMD_FORWARDS = f"fd {MARK1} -e fastq.gz -e fastq.gz -e fq.gz -e fastq \
         {DATA_DIR} > {FILE_FORWARDS}"
 

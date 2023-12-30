@@ -9,9 +9,9 @@ test:
 	mamba run -n $(ENV) snakemake --use-conda --cores all --configfile config/test1.yaml
 	diff -s results_test/test1/sample1.variants.tsv results_test/test1/sample2.variants.tsv
 
-.PHONY clean:
-clean:
-	rm -r results_test
+.PHONY clean-test:
+clean-test:
+	# rm -r results_test
 
 .PHONY style:
 style:

@@ -5,6 +5,12 @@ reference_id:
 target_dir:
   null
 
+forward_mark:
+  "_R1"
+
+reverse_mark:
+  "_R2"
+
 names:
   "results/input/names.txt"
 forwards:

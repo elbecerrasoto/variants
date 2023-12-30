@@ -3,10 +3,15 @@ configfile: "config/config.yaml"
 
 # RefSeq ID of reference genome
 ID = config["reference_id"]
-TARGET_DIR = config["target_dir"]
 
-assert ID is not None, "Please provide a NCBI accession for reference genome"
-assert TARGET_DIR is not None, "Please provide a directory of fastq files"
+
+RESULTS_DIR = config["out_results"]
+RESULTS_DIR_ALIGN = config["out_alignments"]
+RESULTS_DIR_REFERENCE = config["out_reference"]
+
+
+def to_list(file):
+    return [line.strip() for line in open(file).readlines()]
 
 
 FILE_NAMES = config["names"]
@@ -14,9 +19,14 @@ FILE_FORWARDS = config["forwards"]
 FILE_REVERSES = config["reverses"]
 
 
-RESULTS_DIR = config["out_results"]
-RESULTS_DIR_ALIGN = config["out_alignments"]
-RESULTS_DIR_REFERENCE = config["out_reference"]
+NAMES = to_list(FILE_NAMES)
+FORWARDS = to_list(FILE_FORWARDS)
+REVERSES = to_list(FILE_REVERSES)
+
+assert (
+    len(NAMES) == len(FORWARDS) == len(REVERSES)
+), f"Different number of target fastq files and their associated names, check the following files:\n {FILE_NAMES}, {FILE_FORWARDS}, {FILE_REVERSES}"
+
 
 BOWTIE2_THREADS = config["bowtie2_threads"]
 
@@ -30,47 +40,6 @@ ALL = expand("{results}/{names}.variants.tsv", results=RESULTS_DIR, names=NAMES)
 rule all:
     input:
         ALL,
-
-
-rule generate_input:
-    output:
-        f"{FILE_NAMES}",
-        f"{FILE_FORWARDS}",
-        f"{FILE_REVERESES}",
-    shell:
-        """
-        fd {FORWARD_MARK} \
-        -e fastq.gz -e fastq.gz -e fq.gz -e fastq -e fq {} \
-        {TARGET_DIR} > {FILE_FORWARDS}
-
-        fd {REVERSE_MARK} \
-        -e fastq.gz -e fastq.gz -e fq.gz -e fastq -e fq {} \
-        {TARGET_DIR} > {FILE_REVERSES}
-
-        fd {FORWARD_MARK} \
-        -e fastq.gz -e fastq.gz -e fq.gz -e fastq -e fq {TARGET_DIR} | \
-        perl -pe  's/^.*\/(.*?$)/\1/' | \
-        perl -pe 's/{FORWARD_MARK}//' | \
-        perl -pe 's/\.(fastq|fq)(.gz)?$//' \
-        > {FILE_NAMES}
-        """
-
-
-rule assert_input:
-    input:
-        rules.generate_input.output,
-    run:
-        def to_list(file):
-            return [line.strip() for line in open(file).readlines()]
-
-
-        NAMES = to_list(FILE_NAMES)
-        FORWARDS = to_list(FILE_FORWARDS)
-        REVERSES = to_list(FILE_REVERSES)
-
-        assert (
-            len(NAMES) == len(FORWARDS) == len(REVERSES)
-        ), f"Different number of target fastq files and their associated names, check the following files:\n {FILE_NAMES}, {FILE_FORWARDS}, {FILE_REVERSES}"
 
 
 rule download_reference:

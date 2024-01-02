@@ -2,37 +2,16 @@
 reference_id:
   "GCA_013166975.1" # BL12 e. coli
 
-# Directory with the paired fastq data
-target_dir:
-  "tests/no_tdir/data" # Unused, Input files take precedence
-
-# Marking string for parsing forward reads
-forward_mark:
-  "_R1"
-
-# Marking string for parsing reverse reads
-reverse_mark:
-  "_R2"
-
-# Manual declaration of input files,
-# if provided they take precedence over the parsing
-# of fastq data directory
-# 1 file per line
-names:
-  "tests/no_tdir/results/input/names.txt" # names to give to the outputs
-forwards:
-  "tests/no_tdir/results/input/forwards.txt" # input forward files
-reverses:
-  "tests/no_tdir/results/input/reverses.txt" # input reverse files
+# TSV of input files
+# The columns are
+# 1. Path to forward reads
+# 2. Path to reverse reads
+# 3. Sample name
+input:
+  "tests/input.tsv" # names to give to the outputs
 
 out_results:
-  "tests/no_tdir/results"
-out_alignments:
-  "tests/no_tdir/results/alignments"
-out_reference:
-  "tests/no_tdir/results/reference"
-
-bowtie2_threads: 12
+  "tests/results"
 
 variants_pval: 0.01
 variants_freq: 0.1

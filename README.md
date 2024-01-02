@@ -3,6 +3,7 @@
 
 ## TODO for v0.2.0
 
+- [ ] Use "all" for bowtie cores
 - [ ] Update readme
 - [ ] Simplify config
 - [ ] Simplify input files

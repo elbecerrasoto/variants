@@ -1,5 +1,17 @@
 configfile: "config/config.yaml"
 
+from icecream import ic
+
+#print(dir())
+# print("parse\n", dir(parse))
+print(dir(snakemake))
+# ic(snakemake.main)
+# ic(globals())
+# ic(vars(dir(parse)))
+#ic(dir(parse))
+#ic(dir(_name_))
+raise Exception("Testing")
+
 
 from pathlib import Path
 import subprocess as sp
@@ -46,8 +58,8 @@ else:
 
 
 RESULTS_DIR = config["out_results"]
-RESULTS_DIR_ALIGN = config["out_alignments"]
-RESULTS_DIR_REFERENCE = config["out_reference"]
+RESULTS_DIR_ALIGN = f"{RESULTS_DIR}/alignments"
+RESULTS_DIR_REFERENCE = f"{RESULTS_DIR}/reference"
 
 
 def to_list(file):
@@ -63,7 +75,7 @@ assert (
 ), f"Different number of target fastq files and their associated names, check the following files:\n {FILE_NAMES}, {FILE_FORWARDS}, {FILE_REVERSES}"
 
 
-BOWTIE2_THREADS = config["bowtie2_threads"]
+BOWTIE2_THREADS = 12
 
 PVAL = config["variants_pval"]
 FREQ = config["variants_freq"]

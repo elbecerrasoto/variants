@@ -1,2 +1,0 @@
-tests/no_tdir/data/2.fastq.gz
-tests/no_tdir/data/reverse.fastq.gz

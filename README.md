@@ -1,6 +1,20 @@
 
 # Variants
 
+## TODO for v0.2.0
+
+- [ ] Update readme
+- [ ] Simplify config
+- [ ] Simplify input files
+- [ ] Log generation
+- [ ] Script for suggenting input
+
+## TODO for future releases
+
+- [ ] Workflow catalog standards
+
+## Description
+
 Variant Calling [_snakemake pipeline_](https://snakemake.github.io/) used at DeMoraes Lab.
 
 It downloads a reference genome (default _BL12 e. coli_),
@@ -69,11 +83,6 @@ and then run:
 
 + `snakemake --cores all --use-conda`
 
-
-## TODO
-
-- [ ] Capture _stdout_ into _log files_
-- [ ] Data directory as input
 
 ## Issues
 

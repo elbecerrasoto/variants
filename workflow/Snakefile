@@ -2,14 +2,50 @@ configfile: "config/config.yaml"
 
 
 from snakemake.utils import available_cpu_count
+from pathlib import Path
 
 # RefSeq ID of reference genome
 ID = config["reference_id"]
-assert ID is not None, "Please provide a NCBI accession for reference genome"
+assert ID is not None, "Please provide a NCBI accession for reference genome."
 
 # Paths to input files
 INPUT = config["input"]
-# assert TSV with 3 cols
+print(INPUT)
+
+
+def parse_input(ptsv):
+    import csv
+
+    with open(ptsv, "r") as ftsv:
+        names = list()
+        forwards = list()
+        reverses = list()
+        for row in csv.reader(ftsv, delimiter="\t"):
+            name, forward, reverse = row
+            names.append(name)
+            forwards.append(forward)
+            reverses.append(reverse)
+    return names, forwards, reverses
+
+
+NAMES, FORWARDS, REVERSES = parse_input(INPUT)
+
+
+def apply(l, f):
+    return [f(i) for i in l]
+
+
+assert (
+    len(NAMES) == len(FORWARDS) == len(REVERSES)
+), "input.tsv error, columns of different length."
+f = lambda x: x != "" and isinstance(x, str)
+assert (
+    all(apply(NAMES, f)) and all(apply(FORWARDS, f)) and all(apply(REVERSES, f))
+), "Empty string on input data."
+
+f = lambda x: Path(x).exists()
+assert all(apply(FORWARDS, f)), "Forward file not found."
+assert all(apply(REVERSES, f)), "Reverse file not found."
 
 RESULTS_DIR = config["results"]
 RESULTS_DIR_ALIGN = f"{RESULTS_DIR}/alignments"
@@ -24,12 +60,6 @@ BOWTIE2_THREADS = (
 PVAL = config["pval"]
 FREQ = config["freq"]
 
-
-def parse_input(input_tsv):
-    return names, forwards, reverses
-
-
-NAMES, FORWARDS, REVERSES = parse_input
 
 ALL = expand("{results}/{names}.variants.tsv", results=RESULTS_DIR, names=NAMES)
 

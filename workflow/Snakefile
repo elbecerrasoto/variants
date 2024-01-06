@@ -12,6 +12,7 @@ assert ID is not None, "Please provide a NCBI accession for reference genome."
 INPUT = config["input"]
 assert Path(INPUT).exists(), "Please provide an input file."
 
+
 def parse_input(ptsv):
     import csv
 

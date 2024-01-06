@@ -8,7 +8,7 @@ dry-test: tests/input.tsv
 test: tests/input.tsv
 	rm -rf tests/results
 	mamba run -n $(ENV) snakemake --use-conda --cores all --configfile tests/config.yaml
-	diff -s tests/results/sampleA.variants.tsv tests/results/sampleB.variants.tsv
+	diff -s tests/results/sampleA.varscan.tsv tests/results/sampleB.varscan.tsv
 
 tests/input.tsv:
 	mamba run -n $(ENV) scripts/generate_input.py -o tests/ -m1 _R1 -m2 _R2 tests/data/

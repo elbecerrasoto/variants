@@ -61,7 +61,7 @@ PVAL = config["pval"]
 FREQ = config["freq"]
 
 
-ALL = expand("{results}/{names}.variants.tsv", results=RESULTS_DIR, names=NAMES)
+ALL = expand("{results}/{names}.varscan.tsv", results=RESULTS_DIR, names=NAMES)
 
 
 rule all:
@@ -201,7 +201,9 @@ rule call_variants:
     input:
         mpileup=rules.get_mpileup.output.mpileup,
     output:
-        tsv=f"{RESULTS_DIR}/{{name}}.variants.tsv",
+        tsv=f"{RESULTS_DIR}/{{name}}.varscan.tsv",
+    log:
+        f"{RESULTS_DIR}/{{name}}.varscan.log",
     params:
         pval=PVAL,
         freq=FREQ,
@@ -209,5 +211,5 @@ rule call_variants:
         "envs/varscan.yaml"
     shell:
         """
-        varscan pileup2snp {input.mpileup} --min-var-freq {params.freq} --p-value {params.pval} >| {output.tsv}
+        varscan pileup2snp {input.mpileup} --min-var-freq {params.freq} --p-value {params.pval} >| {output.tsv} 2>| {log}
         """

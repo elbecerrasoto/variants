@@ -8,10 +8,10 @@ reference_id:
 # 2. Path to reverse reads
 # 3. Sample name
 input:
-  "tests/input.tsv" # names to give to the outputs
+  "tests/input.tsv"
 
-out_results:
+results:
   "tests/results"
 
-variants_pval: 0.01
-variants_freq: 0.1
+pval: 0.01 # SNP p-value
+freq: 0.1 # SNP frecuency

@@ -1,79 +1,15 @@
 configfile: "config/config.yaml"
 
-from icecream import ic
-
-#print(dir())
-# print("parse\n", dir(parse))
-print(dir(snakemake))
-# ic(snakemake.main)
-# ic(globals())
-# ic(vars(dir(parse)))
-#ic(dir(parse))
-#ic(dir(_name_))
-raise Exception("Testing")
-
-
-from pathlib import Path
-import subprocess as sp
-
 # RefSeq ID of reference genome
 ID = config["reference_id"]
 
 assert ID is not None, "Please provide a NCBI accession for reference genome"
 
-FILE_NAMES = Path(config["names"])
-FILE_FORWARDS = Path(config["forwards"])
-FILE_REVERSES = Path(config["reverses"])
+INPUT = Path(config["input"])
 
-INPUT_FILES = FILE_NAMES, FILE_FORWARDS, FILE_REVERSES
-
-INPUT_FILES_EXIST = (
-    FILE_NAMES.exists() and FILE_FORWARDS.exists() and FILE_REVERSES.exists()
-)
-
-M1 = config["forward_mark"]
-M2 = config["reverse_mark"]
-
-
-TARGET_DIR = config["target_dir"]
-
-if INPUT_FILES_EXIST:  # Input files take precedence
-    print("Input files take precedence over input data dictory")
-
-elif TARGET_DIR is not None:  # Generate input files from data directory
-    print(f"Generating input files at: \n{INPUT_FILES}")
-    cmd = f"python ./scripts/generate_input.py -m1 {M1} -m2 {M2} -o {FILE_NAMES.parent} {TARGET_DIR}"
-    print(cmd)
-    import os
-    print(os.getcwd())
-    sp.run(
-        cmd,
-        check=True, shell=True
-    )
-
-else:
-    raise FileNotFoundError(
-        f"Provide either a directory of fastq files or the input files {INPUT_FILES}"
-    )
-
-
-RESULTS_DIR = config["out_results"]
+RESULTS_DIR = config["results"]
 RESULTS_DIR_ALIGN = f"{RESULTS_DIR}/alignments"
 RESULTS_DIR_REFERENCE = f"{RESULTS_DIR}/reference"
-
-
-def to_list(file):
-    return [line.strip() for line in open(file).readlines()]
-
-
-NAMES = to_list(FILE_NAMES)
-FORWARDS = to_list(FILE_FORWARDS)
-REVERSES = to_list(FILE_REVERSES)
-
-assert (
-    len(NAMES) == len(FORWARDS) == len(REVERSES)
-), f"Different number of target fastq files and their associated names, check the following files:\n {FILE_NAMES}, {FILE_FORWARDS}, {FILE_REVERSES}"
-
 
 BOWTIE2_THREADS = 12
 

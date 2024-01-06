@@ -1,38 +1,17 @@
 # RefSeq ID of reference genome
 reference_id:
-  null
+  null # e.g. GCA_013166975.1
 
-# Directory with the paired fastq data
-target_dir:
-  null
+# TSV of input files
+# The columns are
+# 1. Path to forward reads
+# 2. Path to reverse reads
+# 3. Sample name
+input:
+  "./input.tsv"
 
-# Marking string for parsing forward reads
-forward_mark:
-  "_R1"
+results:
+  "./results"
 
-# Marking string for parsing reverse reads
-reverse_mark:
-  "_R2"
-
-# Manual declaration of input files,
-# if provided they take precedence over the parsing
-# of fastq data directory
-# 1 file per line
-names:
-  "results/input/names.txt" # names to give to the outputs
-forwards:
-  "results/input/forwards.txt" # input forward files
-reverses:
-  "results/input/reverses.txt" # input reverse files
-
-out_results:
-  "results"
-out_alignments:
-  "results/alignments"
-out_reference:
-  "results/reference"
-
-bowtie2_threads: 12
-
-variants_pval: 0.01
-variants_freq: 0.1
+pval: 0.01 # SNP p-value
+freq: 0.1 # SNP frecuency

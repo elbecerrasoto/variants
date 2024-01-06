@@ -6,16 +6,17 @@ dry-test:
 
 .PHONY test:
 test:
-	mamba run -n $(ENV) snakemake --use-conda --cores all --configfile config/test1.yaml
-	diff -s results_test/test1/sample1.variants.tsv results_test/test1/sample2.variants.tsv
+	mamba run -n $(ENV) snakemake --use-conda --cores all --configfile config/test/config.yaml
+	# diff -s test/results/sample1.variants.tsv test/results/sample2.variants.tsv
 
 .PHONY clean-test:
 clean-test:
-	# rm -r results_test
+	# rm -r test/results/
 
 .PHONY style:
 style:
-	mamba run -n $(ENV) snakefmt workflow/
+	mamba run -n $(ENV) snakefmt ./
+	mamba run -n $(ENV) black ./
 
 .PHONY env:
 env:

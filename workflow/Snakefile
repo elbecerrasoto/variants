@@ -1,40 +1,67 @@
 configfile: "config/config.yaml"
 
 
+from snakemake.utils import available_cpu_count
+from pathlib import Path
+
 # RefSeq ID of reference genome
 ID = config["reference_id"]
+assert ID is not None, "Please provide a NCBI accession for reference genome."
+
+# Paths to input files
+INPUT = config["input"]
+assert Path(INPUT).exists(), "Please provide an input file."
 
 
-RESULTS_DIR = config["out_results"]
-RESULTS_DIR_ALIGN = config["out_alignments"]
-RESULTS_DIR_REFERENCE = config["out_reference"]
+def parse_input(ptsv):
+    import csv
+
+    with open(ptsv, "r") as ftsv:
+        names = list()
+        forwards = list()
+        reverses = list()
+        for row in csv.reader(ftsv, delimiter="\t"):
+            name, forward, reverse = row
+            names.append(name)
+            forwards.append(forward)
+            reverses.append(reverse)
+    return names, forwards, reverses
 
 
-def to_list(file):
-    return [line.strip() for line in open(file).readlines()]
+NAMES, FORWARDS, REVERSES = parse_input(INPUT)
 
 
-FILE_NAMES = config["names"]
-FILE_FORWARDS = config["forwards"]
-FILE_REVERSES = config["reverses"]
+def apply(l, f):
+    return [f(i) for i in l]
 
-
-NAMES = to_list(FILE_NAMES)
-FORWARDS = to_list(FILE_FORWARDS)
-REVERSES = to_list(FILE_REVERSES)
 
 assert (
     len(NAMES) == len(FORWARDS) == len(REVERSES)
-), f"Different number of target fastq files and their associated names, check the following files:\n {FILE_NAMES}, {FILE_FORWARDS}, {FILE_REVERSES}"
+), "input.tsv error, columns of different length."
+f = lambda x: x != "" and isinstance(x, str)
+assert (
+    all(apply(NAMES, f)) and all(apply(FORWARDS, f)) and all(apply(REVERSES, f))
+), "Empty string on input data."
+
+f = lambda x: Path(x).exists()
+assert all(apply(FORWARDS, f)), "Forward file not found."
+assert all(apply(REVERSES, f)), "Reverse file not found."
+
+RESULTS_DIR = config["results"]
+RESULTS_DIR_ALIGN = f"{RESULTS_DIR}/alignments"
+RESULTS_DIR_REFERENCE = f"{RESULTS_DIR}/reference"
+
+BOWTIE2_THREADS = (
+    available_cpu_count()
+    if config["bowtie_threads"] == "all"
+    else config["bowtie_threads"]
+)
+
+PVAL = config["pval"]
+FREQ = config["freq"]
 
 
-BOWTIE2_THREADS = config["bowtie2_threads"]
-
-PVAL = config["variants_pval"]
-FREQ = config["variants_freq"]
-
-
-ALL = expand("{results}/{names}.variants.tsv", results=RESULTS_DIR, names=NAMES)
+ALL = expand("{results}/{names}.varscan.tsv", results=RESULTS_DIR, names=NAMES)
 
 
 rule all:
@@ -174,7 +201,9 @@ rule call_variants:
     input:
         mpileup=rules.get_mpileup.output.mpileup,
     output:
-        tsv=f"{RESULTS_DIR}/{{name}}.variants.tsv",
+        tsv=f"{RESULTS_DIR}/{{name}}.varscan.tsv",
+    log:
+        f"{RESULTS_DIR}/{{name}}.varscan.log",
     params:
         pval=PVAL,
         freq=FREQ,
@@ -182,5 +211,5 @@ rule call_variants:
         "envs/varscan.yaml"
     shell:
         """
-        varscan pileup2snp {input.mpileup} --min-var-freq {params.freq} --p-value {params.pval} >| {output.tsv}
+        varscan pileup2snp {input.mpileup} --min-var-freq {params.freq} --p-value {params.pval} >| {output.tsv} 2>| {log}
         """

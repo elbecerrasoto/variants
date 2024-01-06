@@ -1,6 +1,6 @@
 # RefSeq ID of reference genome
 reference_id:
-  null # e.g. GCA_013166975.1
+  null # e.g. "GCA_013166975.1" BL12 e. coli
 
 # TSV of input files
 # The columns are
@@ -8,10 +8,13 @@ reference_id:
 # 2. Path to reverse reads
 # 3. Sample name
 input:
-  "./input.tsv"
+  "input.tsv"
 
 results:
-  "./results"
+  "results"
 
 pval: 0.01 # SNP p-value
-freq: 0.1 # SNP frecuency
+freq: 0.1  # SNP frecuency
+
+bowtie_threads:
+ "all" # all or int

@@ -15,3 +15,6 @@ results:
 
 pval: 0.01 # SNP p-value
 freq: 0.1 # SNP frecuency
+
+bowtie_threads:
+ "all" # all or int

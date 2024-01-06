@@ -2,16 +2,18 @@ ENV=variants
 
 .PHONY dry-test:
 dry-test:
-	mamba run -n $(ENV) snakemake --cores all -np --configfile config/test1.yaml
+	mamba run -n $(ENV) snakemake --cores all -np --configfile ./tests/config.yaml
 
 .PHONY test:
 test:
-	mamba run -n $(ENV) snakemake --use-conda --cores all --configfile config/test/config.yaml
-	# diff -s test/results/sample1.variants.tsv test/results/sample2.variants.tsv
+	mamba run -n $(ENV) ./scripts/generate_input.py -o ./tests/ -m1 _R1 -m2 _R2 ./tests/data/
+	# mamba run -n $(ENV) snakemake --use-conda --cores all --configfile tests/config.yaml
+	# diff -s tests/results/sample1.variants.tsv tests/results/sample2.variants.tsv
 
 .PHONY clean-test:
 clean-test:
-	# rm -r test/results/
+	rm -rf ./tests/results/
+	rm -f ./tests/input.tsv
 
 .PHONY style:
 style:

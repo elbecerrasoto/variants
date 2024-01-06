@@ -94,7 +94,7 @@ and then run:
 - [x] Update readme
 - [x] Simplify config
 - [x] Simplify input files
-- [ ] Log generation
+- [x] Log generation
 - [x] Script for suggesting input
 
 ## TODO for future releases

@@ -10,8 +10,7 @@ assert ID is not None, "Please provide a NCBI accession for reference genome."
 
 # Paths to input files
 INPUT = config["input"]
-print(INPUT)
-
+assert Path(INPUT).exists(), "Please provide an input file."
 
 def parse_input(ptsv):
     import csv
@@ -132,7 +131,7 @@ rule align:
         fq_reverse=lambda w: REVERSES[NAMES.index(w.name)],
         indexes=rules.index_reference.output.indexes,
     output:
-        sam=f"{RESULTS_DIR_ALIGN}/{name}.sam",
+        sam=f"{RESULTS_DIR_ALIGN}/{{name}}.sam",
     params:
         indexes_basename=f"{RESULTS_DIR_REFERENCE}/{ID}",
     threads: BOWTIE2_THREADS
@@ -148,7 +147,7 @@ rule get_bam:
     input:
         sam=rules.align.output.sam,
     output:
-        bam=f"{RESULTS_DIR_ALIGN}/{name}.bam",
+        bam=f"{RESULTS_DIR_ALIGN}/{{name}}.bam",
     conda:
         "envs/samtools.yaml"
     shell:
@@ -161,7 +160,7 @@ rule sort_bam:
     input:
         bam=rules.get_bam.output.bam,
     output:
-        sbam=f"{RESULTS_DIR_ALIGN}/{name}.sorted.bam",
+        sbam=f"{RESULTS_DIR_ALIGN}/{{name}}.sorted.bam",
     conda:
         "envs/samtools.yaml"
     shell:
@@ -174,7 +173,7 @@ rule index_bam:
     input:
         sbam=rules.sort_bam.output.sbam,
     output:
-        bai=f"{RESULTS_DIR_ALIGN}/{name}.sorted.bam.bai",
+        bai=f"{RESULTS_DIR_ALIGN}/{{name}}.sorted.bam.bai",
     conda:
         "envs/samtools.yaml"
     shell:
@@ -188,7 +187,7 @@ rule get_mpileup:
         fna=rules.unzip_reference.output.fna,
         sbam=rules.sort_bam.output.sbam,
     output:
-        mpileup=f"{RESULTS_DIR_ALIGN}/{name}.mpileup",
+        mpileup=f"{RESULTS_DIR_ALIGN}/{{name}}.mpileup",
     conda:
         "envs/samtools.yaml"
     shell:
@@ -201,7 +200,7 @@ rule call_variants:
     input:
         mpileup=rules.get_mpileup.output.mpileup,
     output:
-        tsv=f"{RESULTS_DIR}/{name}.variants.tsv",
+        tsv=f"{RESULTS_DIR}/{{name}}.variants.tsv",
     params:
         pval=PVAL,
         freq=FREQ,

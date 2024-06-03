@@ -3,6 +3,13 @@
 
 **v0.2.0**
 
+## Bugs
+
+### TODO cores bug
+To fix, inherit bowtie cores from pipeline.
+Fix the cores parameter.
+Only working for the input "all".
+
 ## Description
 
 Variant Calling [_snakemake pipeline_](https://snakemake.github.io/) used at DeMoraes Lab.

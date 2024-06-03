@@ -57,6 +57,7 @@ BOWTIE2_THREADS = (
     else config["bowtie_threads"]
 )
 
+
 PVAL = config["pval"]
 FREQ = config["freq"]
 

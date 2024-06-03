@@ -1,6 +1,6 @@
-# RefSeq ID of reference genome
+# 2024-06-03.23-1 Adam 
 reference_id:
-  null # e.g. "GCA_013166975.1" BL12 e. coli
+  GCF_000022665.1
 
 # TSV of input files
 # The columns are

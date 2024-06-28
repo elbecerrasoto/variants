@@ -51,11 +51,6 @@ RESULTS_DIR = config["results"]
 RESULTS_DIR_ALIGN = f"{RESULTS_DIR}/alignments"
 RESULTS_DIR_REFERENCE = f"{RESULTS_DIR}/reference"
 
-BOWTIE2_THREADS = (
-    available_cpu_count()
-    if config["bowtie_threads"] == "all"
-    else config["bowtie_threads"]
-)
 
 PVAL = config["pval"]
 FREQ = config["freq"]
@@ -117,7 +112,7 @@ rule index_reference:
         ),
     params:
         indexes_basename=f"{RESULTS_DIR_REFERENCE}/{ID}",
-    threads: BOWTIE2_THREADS
+    threads: workflow.cores
     conda:
         "envs/bowtie2.yaml"
     shell:
@@ -135,7 +130,7 @@ rule align:
         sam=f"{RESULTS_DIR_ALIGN}/{{name}}.sam",
     params:
         indexes_basename=f"{RESULTS_DIR_REFERENCE}/{ID}",
-    threads: BOWTIE2_THREADS
+    threads: workflow.cores
     conda:
         "envs/bowtie2.yaml"
     shell:

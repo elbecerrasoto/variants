@@ -9,3 +9,4 @@ dependencies:
     - black # dev
     - fd-find # script
     - ncbi-datasets-cli # script
+    - unzip

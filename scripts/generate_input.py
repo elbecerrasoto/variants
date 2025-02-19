@@ -36,13 +36,13 @@ FILE_INPUT = f"{OUT_DIR}/input.tsv"
 if __name__ == "__main__":
     Path(OUT_DIR).mkdir(parents=True, exist_ok=True)
 
-    CMD_FORWARDS = f"fd {MARK1} -e fastq.gz -e fastq.gz -e fq.gz -e fastq \
+    CMD_FORWARDS = f"fd {MARK1} -e fastq.gz -e fq.gz -e fastq \
         {DATA_DIR} > {FILE_FORWARDS}"
 
-    CMD_REVERSES = f"fd {MARK2} -e fastq.gz -e fastq.gz -e fq.gz -e fastq \
+    CMD_REVERSES = f"fd {MARK2} -e fastq.gz -e fq.gz -e fastq \
         {DATA_DIR} > {FILE_REVERSES}"
 
-    CMD_NAMES = f"fd {MARK1} -e fastq.gz -e fastq.gz -e fq.gz -e fastq -e fq {DATA_DIR} | \
+    CMD_NAMES = f"fd {MARK1} -e fastq.gz -e fq.gz -e fastq -e fq {DATA_DIR} | \
         perl -pe  's/^.*\\/(.*?$)/$1/' | \
         perl -pe 's/{MARK1}//' | \
         perl -pe 's/\\.(fastq|fq)(.gz)?$//' > {FILE_NAMES}"
